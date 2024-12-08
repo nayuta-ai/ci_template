@@ -1,0 +1,21 @@
+name: Assign Issue
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  assign-issue:
+    name: Assign Issue
+    if: endsWith(github.actor, '[bot]') == false && github.event.issue.assignee == null
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      repository-projects: read
+    steps:
+      - name: Add event actor to assignees
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh issue edit ${{ github.event.issue.number }} --add-assignee ${{ github.actor }}
